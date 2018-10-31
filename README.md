@@ -10,6 +10,8 @@ Semantic segmentation describes the process of associating each pixel of an imag
 Meta Learning is defined as the problem of learning how to learn. Hyperparameter optimization is the problem of choosing a set of optimal hyperparameters for a learning algorithm. 
 The high level idea of the task is given in the diagram below. This is applicable in general to any algorithm. The algorithm begins with an initial set of hyper parameters and continues to explore how the machine learning model behaves with different hyper parameters. After a certain amount of exploration, the algorithm gives the best model to use for the task.
 
+![Alt text](https://i.imgur.com/mAAmmQf.png)
+
 ## The Challenge
 
 The traditional algorithms like grid search, and random search are trivially parallelizable. We aim to quickly set up the framework and get  these algorithms running.
