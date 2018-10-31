@@ -1,37 +1,72 @@
-## Welcome to GitHub Pages
+# Proposal
 
-You can use the [editor on GitHub](https://github.com/pbollimp/15618_project/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Problem summary
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+We are going to optimize the task of searching for the optimal hyper parameters for a fixed machine learning problem of semantic segmentation in images. There are multiple approaches (such as grid search, random search, bayesian optimization, gradient-based optimization, evolutionary optimization, reinforcement learning) that can be used in order to solve this task. Additionally, the hyper parameter space is huge (learning rate, loss function, batch size, number of hidden units and layers, activation functions just to name a few). We aim to explore and speed up different techniques and compare the resulting model accuracy along with the time taken by the techniques to find the best model.
 
-### Markdown
+## Background
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Semantic segmentation describes the process of associating each pixel of an image with a class label (such as flower, person, road, sky, ocean, or car). One of the major application for semantic segmentation today in the autonomous driving cars. In order to not focus our time too much on the problem domain, we are going to start with an existing deep learning model that acts as our baseline and run our algorithms on this.
+Meta Learning is defined as the problem of learning how to learn. Hyperparameter optimization is the problem of choosing a set of optimal hyperparameters for a learning algorithm. 
+The high level idea of the task is given in the diagram below. This is applicable in general to any algorithm. The algorithm begins with an initial set of hyper parameters and continues to explore how the machine learning model behaves with different hyper parameters. After a certain amount of exploration, the algorithm gives the best model to use for the task.
 
-```markdown
-Syntax highlighted code block
+## The Challenge
 
-# Header 1
-## Header 2
-### Header 3
+The traditional algorithms like grid search, and random search are trivially parallelizable. We aim to quickly set up the framework and get  these algorithms running.
 
-- Bulleted
-- List
+It is not quickly obvious on how to parallelize the bayesian optimization and  gradient-based optimization algorithms, but there is existing literature that describes how to optimize them [1, 2]. These algorithms provides a decent amount of challenge to understand and implement.
 
-1. Numbered
-2. List
+The main challenging part of our project lies in coming up and implementing the parallelization techniques for the the evolutionary search and reinforcement learning algorithms.
 
-**Bold** and _Italic_ and `Code` text
+Evolutionary hyperparameter search algorithm does the following. It randomly generate tuples of hyperparameters and creates multiple versions of them by sampling random noise. It then evaluate the performance of the model under these hyperparameters tuples and ranks the hyperparameter tuples by their effectiveness. It replaces the the worst-performing hyperparameter tuples with new hyperparameter tuples. The previous three steps are repeated until a satisfactory performance is reached or until the algorithm performance is no longer improving. 
 
-[Link](url) and ![Image](src)
-```
+There are various challenges in trying to parallelize this algorithm. We need to deal with the memory contention that results when accessing the common tuples and also the way to communication and parallel this task to take advantage of locality is not immediately obvious. Moreover, we also need to synchronize after each iteration in order to evaluate the convergence criteria and also to  generate a fresh set of hyper parameters to search. 
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+The main idea of Reinforcement learning (RL) is to keep adapting to the environment (our model) over time in order to maximize the long-term reward (model accuracy). It is not straightforward to parallelize the deep learning models within this framework. Stochastic gradient descent assumes the training samples to be independent and identically distributed  while most often, this is not the case. Though replay memory can be used to combat this, parallelizing this by reducing the memory contention and exploiting locality is a challenge. Also, trying to simply run multiple instances asynchronously in parallel does not work since we need to ensure that the parameter updates are synchronized and the gradients are not too stale for each instance.
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/pbollimp/15618_project/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+However, we think that similar optimization strategies can be used in both evolutionary search and reinforcement learning algorithms. First, we can optimize the common instructions that are executed every iteration by exploiting SIMD parallelism. We can explore a shared memory model  in both these techniques, to ensure parallel updates and good locality of memory (need to deal with cache-coherency issues). We can also experiment with the frequency of synchronization, and explore the trade-offs between the performance (finding the best model as soon as possible) and accuracy (the accuracy of the model). 
 
-### Support or Contact
+Since the hyper parameter search space is also huge, we can also start with smaller number of hyperparameters at the start and gradually increase them. We can also use some heuristics at the start such as quickly determining the most important hyper parameters automatically and then fine-tune them.  
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+## Resources
+
+We will be utilizing CPU (4-core 2.7 GHz Intel Core i5 Processors) and GPU (NVIDIA GeForce GTX 1080 GPU) for this task. We need to use GPU since we want to minimize the time taken for the model to train once we chose a set of hyper parameters. We will be running all our algorithms on the CPU. We will benefit from having access to GPUs. 
+For the machine learning task of image semantic segmentation, we will be using an existing codebase in pytorch framework [3]. We plan to implement the rest of algorithms from scratch.
+
+## Goals and Deliverables
+
+- [5%] Setting up the framework and running the baseline model
+- [10%] Implementing and parallelizing traditional grid search and random search
+- [15%] Implementing  sequential version of bayesian optimization and gradient-based optimization algorithms
+- [20%] Implementing sequential version of evolutionary search and reinforcement learning algorithm (need to fix one RL algorithm)
+- [40%] Parallelizing bayesian optimization and gradient-based optimization algorithms
+- [75%] Coming up with strategies to parallelize evolutionary search and implementing them
+- [100%] Coming up with strategies to parallelize reinforcement learning algorithm and provide a comparative analysis of all the algorithms
+- [125%] Increase the challenge of parallelization by exploring even more hyper parameters. Possibly have another algorithm which is a combination of both evolutionary search and RL. Improve the parallelization even more by optimizing the baseline neural network model or by scaling up the resources.
+
+Since we do not have a baseline model at this time, we are not sure of the precise performance goals right now. But we primarily want to explore the tradeoff between performance and accuracy in all the algorithms and explore the maximum speedup achievable for each algorithm. 
+
+
+## Platform Choice
+
+The model will be using pytorch deep learning framework and will be run on CUDA. We will be exploring both python and C++ as a platform choice for all our algorithms during our first week.
+
+
+## Schedule
+
+- Week 1 (10/31 - 11/4): Decide the exact ML model to use as our baseline and decide the choice of platform. Set up the framework and run the baseline model with a fixed set of hyper parameters. 
+- Week 2 (11/5 - 11/11): Decide the precise bayesian optimization, gradient-based optimization algorithm, and RL algorithm to implement. Implementing and parallelizing traditional grid search and random search.
+- Week 3 (11/12 - 11/18): Implementing and parallelizing bayesian optimization and gradient-based optimization algorithms. Provide comparative analysis of all the four algorithms for the checkpoint.
+- Week 4 (11/19 - 11/25): Implementing sequential version of evolutionary search and  RL algorithms. Explore the strategies for parallelizing them. Think about how same parallel techniques can also be used for both.
+- Week 5 (11/26 - 12/2): Parallelizing evolutionary search and RL algorithm
+- Week 6 (12/3 - 12/9): Parallelizing evolutionary search and RL algorithm
+- Week 7 (12/10 - 12/15): Wrapping up the experiments for all. Creating report and poster.
+
+## References
+
+- [1] Kandasamy, K., Krishnamurthy, A., Schneider, J., & Poczos, B. (2017). Asynchronous parallel Bayesian optimisation via thompson sampling.
+- [2] Richtárik, P., & Takáč, M. (2016). Parallel coordinate descent methods for big data optimization.
+- [3] https://github.com/CSAILVision/semantic-segmentation-pytorch
+
