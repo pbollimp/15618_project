@@ -1,8 +1,0 @@
-title: CubeRover
-description: 15-418 Final project
-google_analytics: 
-show_downloads: true
-theme: jekyll-theme-cayman
-
-gems:
-  - jekyll-mentions
