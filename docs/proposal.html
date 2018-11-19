@@ -18,7 +18,7 @@
 <p> 
 Semantic segmentation describes the process of associating each pixel of an image with a class label (such as flower, person, road, sky, ocean, or car). One of the major application for semantic segmentation today in the autonomous driving cars. In order to not focus our time too much on the problem domain, we are going to start with an existing deep learning model that acts as our baseline and run our algorithms on this. Meta Learning is defined as the problem of learning how to learn. Hyperparameter optimization is the problem of choosing a set of optimal hyperparameters for a learning algorithm. The high level idea of the task is given in the diagram below. This is applicable in general to any algorithm. The algorithm begins with an initial set of hyper parameters and continues to explore how the machine learning model behaves with different hyper parameters. After a certain amount of exploration, the algorithm gives the best model to use for the task.</p>
 
-
+<img src="../img/flow.png"  />
 
 
 <h3>The Challenge</h3>
@@ -67,7 +67,6 @@ We will be utilizing CPU (4-core 2.7 GHz Intel Core i5 Processors) and GPU (NVID
 
 <h3>Goals and Deliverables</h3>
 
-<ul style="list-style: none;">
 <li> [5%] Setting up the framework and running the baseline model </li>
 <li> [10%] Implementing and parallelizing traditional grid search and random search </li>
 <li> [15%] Implementing sequential version of bayesian optimization and gradient-based optimization algorithms </li>
@@ -77,7 +76,6 @@ We will be utilizing CPU (4-core 2.7 GHz Intel Core i5 Processors) and GPU (NVID
 <li>[75%] Coming up with strategies to parallelize evolutionary search and implementing them</li>
 <li>[100%] Coming up with strategies to parallelize reinforcement learning algorithm and provide a comparative analysis of all the algorithms</li>
 <li>[125%] Increase the challenge of parallelization by exploring even more hyper parameters. Possibly have another algorithm which is a combination of both evolutionary search and RL. Improve the parallelization even more by optimizing the baseline neural network model or by scaling up the resources.</li>
-</ul>
 
 
 <p>
@@ -91,7 +89,6 @@ Since we do not have a baseline model at this time, we are not sure of the preci
 <h3>Schedule</h3>
 
 
-<ul style="list-style: none;">
 <li> Week 1 (10/31 - 11/4): Decide the exact ML model to use as our baseline and decide the choice of platform. Set up the framework and run the baseline model with a fixed set of hyper parameters.</li>
 <li> Week 2 (11/5 - 11/11): Decide the precise bayesian optimization, gradient-based optimization algorithm, and RL algorithm to implement. Implementing and parallelizing traditional grid search and random search.</li>
 <li> Week 3 (11/12 - 11/18): Implementing and parallelizing bayesian optimization and gradient-based optimization algorithms. Provide comparative analysis of all the four algorithms for the checkpoint.</li>
@@ -99,7 +96,6 @@ Since we do not have a baseline model at this time, we are not sure of the preci
 <li> Week 5 (11/26 - 12/2): Parallelizing evolutionary search and RL algorithm</li>
 <li> Week 6 (12/3 - 12/9): Parallelizing evolutionary search and RL algorithm</li>
 <li> Week 7 (12/10 - 12/15): Wrapping up the experiments for all. Creating report and poster.</li>
-</ul>
 
 <h3>References</h3>
 
